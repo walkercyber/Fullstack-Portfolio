@@ -11,21 +11,18 @@ namespace FullstackLabb3
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddAuthorization();
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<PortfolioDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddScoped<PortfolioService>();
+            builder.Services.AddScoped<SkillService>();
+            builder.Services.AddScoped<ProjectService>();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -33,38 +30,78 @@ namespace FullstackLabb3
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
-            app.MapPost("/Portfolio", async (Portfolio portfolio, PortfolioService service) =>
+            app.MapPost("/skills", async (Skill skill, SkillService service) =>
             {
-                await service.AddPortfolio(portfolio);
+                await service.AddSkill(skill);
+                return Results.Ok();
+            });
+             
+            app.MapGet("/skills", async (SkillService service) =>
+            {
+                var skills = await service.GetSkills();
+                return Results.Ok(skills);
+            });
+
+            app.MapGet("/skills/{id}", async (int id, SkillService service) =>
+            {
+                var skill = await service.GetSkillById(id);
+
+                if (skill == null)
+                {
+                    return Results.NotFound("Skill not found");
+                }
+
+                return Results.Ok(skill);
+            });
+            app.MapPut("/skills/{id}", async (int id, Skill skill, SkillService service) =>
+            {
+                var updatedSkill = await service.UpdateSkill(id, skill);
+                return updatedSkill != null ? Results.Ok(updatedSkill) : Results.NotFound("Skill not found");
+            });
+
+            app.MapDelete("/skills/{id}", async (int id, SkillService service) =>
+            {
+                var deletedSkill = await service.DeleteSkill(id);
+                return deletedSkill != null ? Results.Ok(deletedSkill) : Results.NotFound("Skill not found");
+            });
+
+
+            app.MapPost("/projects", async (Project project, ProjectService service) =>
+            {
+                await service.AddProject(project);
                 return Results.Ok();
             });
 
-            app.MapGet("/Portfolios", async (PortfolioService service) =>
+            app.MapGet("/projects", async (ProjectService service) =>
             {
-                var getAll = await service.GetPortfolio();
-                return Results.Ok(getAll);
+                var projects = await service.GetProjects();
+                return Results.Ok(projects);
             });
 
-            app.MapPut("/Portfolio/{id}", async (int id, Portfolio portfolio, PortfolioService service) =>
+            app.MapGet("/projects/{id}", async (int id, ProjectService service) =>
             {
-                var updatePortfolio = await service.UpdatePortfolio(id, portfolio);
-                if (updatePortfolio == null)
-                    return Results.NotFound("Information not found");
+                var project = await service.GetProjectById(id);
 
-                return Results.Ok(updatePortfolio);
-            });
-
-            app.MapDelete("/Portfolio/{id}", async (int id, PortfolioService service) =>
-            {
-                var isDeleted = await service.DeletePortfolio(id);
-                if (isDeleted == null)
+                if (project == null)
                 {
-                    return Results.NotFound("Information not found");
+                    return Results.NotFound("Project not found");
                 }
-                return Results.Ok(isDeleted);
+
+                return Results.Ok(project);
+            });
+
+            app.MapPut("/projects/{id}", async (int id, Project project, ProjectService service) =>
+            {
+                var updatedProject = await service.UpdateProject(id, project);
+                return updatedProject != null ? Results.Ok(updatedProject) : Results.NotFound("Project not found");
+            });
+
+            app.MapDelete("/projects/{id}", async (int id, ProjectService service) =>
+            {
+                var deletedProject = await service.DeleteProject(id);
+                return deletedProject != null ? Results.Ok(deletedProject) : Results.NotFound("Project not found");
             });
 
             app.Run();

@@ -3,9 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FullstackLabb3.Data
 {
-    public class PortfolioDbContext : DbContext
+    public class DataContext : DbContext
     {
-        public PortfolioDbContext(DbContextOptions<PortfolioDbContext> options) : base(options) { }
-        public DbSet<Portfolio> Portfolios { get; set; }
+        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+        public DbSet<Skill> Skills { get; set; }
+        public DbSet<Project> Projects { get; set; }
     }
 }
