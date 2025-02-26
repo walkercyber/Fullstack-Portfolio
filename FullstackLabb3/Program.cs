@@ -35,7 +35,7 @@ namespace FullstackLabb3
             app.UseAuthorization();
 
             //Create
-            app.MapPost("/skills", async (Skill skill, SkillService service) =>
+            app.MapPost("/skill", async (Skill skill, SkillService service) =>
             {
                 await service.AddSkill(skill);
                 return Results.Ok();
@@ -61,21 +61,22 @@ namespace FullstackLabb3
             });
 
             //Update
-            app.MapPut("/skills/{id}", async (int id, Skill skill, SkillService service) =>
+            app.MapPut("/skill/{id}", async (int id, Skill skill, SkillService service) =>
             {
                 var updatedSkill = await service.UpdateSkill(id, skill);
                 return updatedSkill != null ? Results.Ok(updatedSkill) : Results.NotFound("Skill not found");
             });
 
             //Delete
-            app.MapDelete("/skills/{id}", async (int id, SkillService service) =>
+            app.MapDelete("/skill/{id}", async (int id, SkillService service) =>
             {
                 var deletedSkill = await service.DeleteSkill(id);
                 return deletedSkill != null ? Results.Ok(deletedSkill) : Results.NotFound("Skill not found");
             });
 
+
             //Create        
-            app.MapPost("/projects", async (Project project, ProjectService service) =>
+            app.MapPost("/project", async (Project project, ProjectService service) =>
             {
                 await service.AddProject(project);
                 return Results.Ok();
@@ -101,14 +102,14 @@ namespace FullstackLabb3
             });
 
             //Update
-            app.MapPut("/projects/{id}", async (int id, Project project, ProjectService service) =>
+            app.MapPut("/project/{id}", async (int id, Project project, ProjectService service) =>
             {
                 var updatedProject = await service.UpdateProject(id, project);
                 return updatedProject != null ? Results.Ok(updatedProject) : Results.NotFound("Project not found");
             });
 
             //Delete
-            app.MapDelete("/projects/{id}", async (int id, ProjectService service) =>
+            app.MapDelete("/project/{id}", async (int id, ProjectService service) =>
             {
                 var deletedProject = await service.DeleteProject(id);
                 return deletedProject != null ? Results.Ok(deletedProject) : Results.NotFound("Project not found");

@@ -20,6 +20,7 @@ namespace FullstackLabb3.Data
         }
 
         public async Task<Skill> GetSkillById(int id)
+
         {
             return await _db.Skills.FirstOrDefaultAsync(x => x.Id == id);
         }
